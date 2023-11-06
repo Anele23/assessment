@@ -1,7 +1,0 @@
-C:\Users\TheBoss\source\repos\BulkUploader\UnitTester\bin\Debug\UnitTester.exe.config
-C:\Users\TheBoss\source\repos\BulkUploader\UnitTester\bin\Debug\UnitTester.exe
-C:\Users\TheBoss\source\repos\BulkUploader\UnitTester\bin\Debug\UnitTester.pdb
-C:\Users\TheBoss\source\repos\BulkUploader\UnitTester\obj\Debug\UnitTester.csproj.AssemblyReference.cache
-C:\Users\TheBoss\source\repos\BulkUploader\UnitTester\obj\Debug\UnitTester.csproj.CoreCompileInputs.cache
-C:\Users\TheBoss\source\repos\BulkUploader\UnitTester\obj\Debug\UnitTester.exe
-C:\Users\TheBoss\source\repos\BulkUploader\UnitTester\obj\Debug\UnitTester.pdb
