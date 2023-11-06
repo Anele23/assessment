@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualBasic.FileIO;
 
 class Program
 {
-    public static bool HasTextFieldMarkedAsSearchable(string filepath)
+    public static List<string> GetColumnsWithLongValues(string filepath)
     {
+        List<string> columnsWithLongValues = new List<string>();
+
         try
         {
             // Using TextFieldParser to read CSV file with semicolon (;) delimiter
@@ -13,25 +16,30 @@ class Program
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(";");
 
-                // Read the header line to get column indexes
+                // Read the first line as headers
                 string[] headers = parser.ReadFields();
-                int typeIndex = Array.IndexOf(headers, "Type");
-                int searchIndex = Array.IndexOf(headers, "Search");
 
-                // Validate values in each row
-                while (!parser.EndOfData)
+                if (headers != null)
                 {
-                    string[] fields = parser.ReadFields();
-
-                    // Check if the field is of type Text and marked as Searchable
-                    if (typeIndex >= 0 && searchIndex >= 0 && fields[typeIndex].Equals("Text", StringComparison.OrdinalIgnoreCase) && fields[searchIndex].Equals("Yes", StringComparison.OrdinalIgnoreCase))
+                    // Loop through each column and check the length of values
+                    while (!parser.EndOfData)
                     {
-                        return true;
+                        string[] fields = parser.ReadFields();
+
+                        // Check if any value in this column has length greater than 100 characters
+                        for (int i = 0; i < fields.Length; i++)
+                        {
+                            if (!string.IsNullOrWhiteSpace(fields[i]) && fields[i].Length > 100)
+                            {
+                                // Value in this column exceeds 100 characters, add header to the list
+                                columnsWithLongValues.Add(headers[i]);
+                                break; // Move to the next column
+                            }
+                        }
                     }
                 }
 
-                // No Text field marked as Searchable found
-                return false;
+                return columnsWithLongValues;
             }
         }
         catch (Exception ex)
@@ -47,26 +55,23 @@ class Program
 
         try
         {
-            // Call the HasTextFieldMarkedAsSearchable method with the file path
-            bool hasTextFieldMarkedAsSearchable = HasTextFieldMarkedAsSearchable(filePath);
+            // Call the GetColumnsWithLongValues method with the file path
+            List<string> columnsWithLongValues = GetColumnsWithLongValues(filePath);
 
             // Print the result
-            if (hasTextFieldMarkedAsSearchable)
+            if (columnsWithLongValues.Count > 0)
             {
-                Console.WriteLine("At least one Text field is marked as Searchable.");
-                Console.ReadLine();
+                Console.WriteLine("Columns with values longer than 100 characters: " + string.Join(", ", columnsWithLongValues));
             }
             else
             {
-                Console.WriteLine("No Text field is marked as Searchable.");
-                Console.ReadLine();
+                Console.WriteLine("No columns have values longer than 100 characters.");
             }
         }
         catch (Exception ex)
         {
             // Handle and display any exceptions that occur during the process
             Console.WriteLine("An error occurred: " + ex.Message);
-            Console.ReadLine();
         }
     }
 }

@@ -2,40 +2,86 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLogicLayer
 {
-    public  class FileValidator
+    public class FileValidator
     {
         /// <summary>
         /// Check if the content is a test string and line delimited by CR or CRLF
         /// </summary>
-        /// <param name="text"></param>
+        /// <param name=fileBytes"></param>
         /// <returns></returns>
-        public static bool CheckLineEnding(string text)
+        public static bool CheckLineEnding(byte[] fileBytes)
         {
-          return text.Contains("r\n") || (text.Contains('\r') && !text.Contains("\n"));
+            try
+            {
+                string content = Encoding.UTF8.GetString(fileBytes);
+                bool isCommaSeparated = IsCommaSeparated(content);
+                bool isCRorCRLF = IsCRorCRLF(content);
+
+                if (isCommaSeparated && isCRorCRLF)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new CustomValidationException("Error occurred while checking line endings in the CSV file.", ex);
+            }
+        }
+
+        // Check if the CSV file is comma-separated
+        static bool IsCommaSeparated(string content)
+        {
+            string[] lines = content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+            foreach (var line in lines)
+            {
+                if (!line.Contains(","))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        static bool IsCRorCRLF(string content)
+        {
+            if (content.Contains("\r\n"))
+            {
+                return true; // File uses CRLF line endings
+            }
+            else if (content.Contains("\r"))
+            {
+                return true; // File uses CR line endings
+            }
+            else
+            {
+                return false; // File uses LF line endings
+            }
         }
 
         /// <summary>
         /// Check if each line contains at least 5 fields
         /// </summary>
-        /// <param name="filepath"></param>
-        public static bool CheckFileFields(string filepath)
+        /// <param name="fileBytes"></param>
+        public static bool CheckFileFields(byte[] fileBytes)
         {
             try
             {
-                // Initialize the result variable to false
-                bool result = false;
-
-
-                // Using TextFieldParser to read CSV file with semicolon (;) delimiter
-                using (TextFieldParser parser = new TextFieldParser(filepath))
+                using (TextFieldParser parser = new TextFieldParser(new MemoryStream(fileBytes)))
                 {
                     parser.TextFieldType = FieldType.Delimited;
-                    parser.SetDelimiters(";");
+                    parser.SetDelimiters(",");
 
                     // Loop through each line in the CSV file
                     while (!parser.EndOfData)
@@ -46,38 +92,37 @@ namespace BusinessLogicLayer
                         // Check if the line contains at least 5 fields
                         if (fields != null && fields.Length >= 5)
                         {
-                            // Set result to true and return immediately if a line with at least 5 fields is found
-                            result = true;
-                            return result;
+                            // If a line with at least 5 fields is found, return true immediately
+                            return true;
                         }
                     }
                 }
 
-                // Return the final result after checking all lines in the CSV file
-                return result;
+                // If no line with at least 5 fields is found, return false
+                return false;
             }
             catch (Exception ex)
             {
-                // Handle and rethrow the exception if any error occurs during the process
-                throw;
+                
+                throw new CustomValidationException("Error occurred while checking file fields in the CSV file.", ex);
             }
         }
+
 
         /// <summary>
         /// Check if the first line contains at least the following fields: Name, Type, Search, Library Filter,
         /// Visible
         /// </summary>
-        /// <param name="filepath"></param>
+        /// <param name="fileBytes"></param>
         /// <returns></returns>
-        public static bool CheckFileHeader(string filepath)
+        public static bool CheckFileHeader(byte[] fileBytes)
         {
             try
             {
-                // Using TextFieldParser to read CSV file with semicolon (;) delimiter
-                using (TextFieldParser parser = new TextFieldParser(filepath))
+                using (TextFieldParser parser = new TextFieldParser(new MemoryStream(fileBytes)))
                 {
                     parser.TextFieldType = FieldType.Delimited;
-                    parser.SetDelimiters(";");
+                    parser.SetDelimiters(",");
 
                     // Read the first line as headers
                     string[] headers = parser.ReadFields();
@@ -89,27 +134,27 @@ namespace BusinessLogicLayer
             }
             catch (Exception ex)
             {
-                // Handle and rethrow the exception if any error occurs during the process
-                throw;
+                
+                throw new CustomValidationException("Error occurred while checking file header in the CSV file.", ex);
             }
         }
+
 
         /// <summary>
         /// Check for empty values. All 5 fields must have a value.
         /// </summary>
-        /// <param name="filepath"></param>
+        /// <param name="fileBytes"></param>
         /// <returns></returns>
-        public static List<string> GetColumnsWithEmptyValues(string filepath)
+        public static List<string> GetColumnsWithEmptyValues(byte[] fileBytes)
         {
             List<string> columnsWithEmptyValues = new List<string>();
 
             try
             {
-                // Using TextFieldParser to read CSV file with semicolon (;) delimiter
-                using (TextFieldParser parser = new TextFieldParser(filepath))
+                using (TextFieldParser parser = new TextFieldParser(new MemoryStream(fileBytes)))
                 {
                     parser.TextFieldType = FieldType.Delimited;
-                    parser.SetDelimiters(";");
+                    parser.SetDelimiters(",");
 
                     // Read the first line as headers
                     string[] headers = parser.ReadFields();
@@ -150,25 +195,26 @@ namespace BusinessLogicLayer
             }
             catch (Exception ex)
             {
-                // Handle and rethrow the exception if any error occurs during the process
-                throw;
+                
+                throw new CustomValidationException("Error occurred while checking columns with empty values in the CSV file.", ex);
             }
         }
+
+
 
 
         /// <summary>
         /// Check field name lengths <= 100 characters
         /// </summary>
-        /// <param name="filepath"></param>
+        /// <param name="fileBytes"></param>
         /// <returns></returns>
-        public static List<string> GetColumnsWithLongValues(string filepath)
+        public static List<string> GetColumnsWithLongValues(byte[] fileBytes)
         {
             List<string> columnsWithLongValues = new List<string>();
 
             try
             {
-                // Using TextFieldParser to read CSV file with semicolon (;) delimiter
-                using (TextFieldParser parser = new TextFieldParser(filepath))
+                using (TextFieldParser parser = new TextFieldParser(new MemoryStream(fileBytes)))
                 {
                     parser.TextFieldType = FieldType.Delimited;
                     parser.SetDelimiters(";");
@@ -201,24 +247,22 @@ namespace BusinessLogicLayer
             }
             catch (Exception ex)
             {
-                // Handle and rethrow the exception if any error occurs during the process
-                throw;
+                throw new CustomValidationException("Error occurred while checking columns with long values in the CSV file.", ex);
             }
         }
 
         /// <summary>
         /// Check for valid field types AND type property values:
         /// </summary>
-        /// <param name="filepath"></param>
+        /// <param name="fileBytes"></param>
         /// <returns></returns>
-        public static List<string> GetInvalidColumns(string filepath)
+        public static List<string> GetInvalidColumns(byte[] fileBytes)
         {
             List<string> invalidColumns = new List<string>();
 
             try
             {
-                // Using TextFieldParser to read CSV file with semicolon (;) delimiter
-                using (TextFieldParser parser = new TextFieldParser(filepath))
+                using (TextFieldParser parser = new TextFieldParser(new MemoryStream(fileBytes)))
                 {
                     parser.TextFieldType = FieldType.Delimited;
                     parser.SetDelimiters(";");
@@ -236,17 +280,17 @@ namespace BusinessLogicLayer
                         string[] fields = parser.ReadFields();
 
                         // Check Type column
-                        if (!IsValidFieldType(fields[typeIndex]))
+                        if (typeIndex >= 0 && !IsValidFieldType(fields[typeIndex]))
                             invalidColumns.Add("Type");
 
                         // Check Search, Library Filter, and Visible columns
-                        if (!IsValidYesNoValue(fields[searchIndex]))
+                        if (searchIndex >= 0 && !IsValidYesNoValue(fields[searchIndex]))
                             invalidColumns.Add("Search");
 
-                        if (!IsValidYesNoValue(fields[libraryFilterIndex]))
+                        if (libraryFilterIndex >= 0 && !IsValidYesNoValue(fields[libraryFilterIndex]))
                             invalidColumns.Add("Library Filter");
 
-                        if (!IsValidYesNoValue(fields[visibleIndex]))
+                        if (visibleIndex >= 0 && !IsValidYesNoValue(fields[visibleIndex]))
                             invalidColumns.Add("Visible");
                     }
                 }
@@ -255,10 +299,10 @@ namespace BusinessLogicLayer
             }
             catch (Exception ex)
             {
-                // Handle and rethrow the exception if any error occurs during the process
-                throw;
+                throw new CustomValidationException("Error occurred while validating columns in the CSV file.", ex);
             }
         }
+
 
 
         public static bool IsValidFieldType(string type)
@@ -278,19 +322,20 @@ namespace BusinessLogicLayer
         /// <summary>
         /// Check field type property rules
         /// </summary>
-        /// <param name="filepath"></param>
+        /// <param name="fileBytes"></param>
         /// <returns></returns>
-        public static List<string> CheckFieldPropertyRules(string filepath)
+        public static List<string> CheckFieldPropertyRules(byte[] fileBytes)
         {
             List<string> invalidColumns = new List<string>();
 
             try
             {
-                // Using TextFieldParser to read CSV file with semicolon (;) delimiter
-                using (TextFieldParser parser = new TextFieldParser(filepath))
+                string content = Encoding.UTF8.GetString(fileBytes);
+
+                using (TextFieldParser parser = new TextFieldParser(new MemoryStream(fileBytes)))
                 {
                     parser.TextFieldType = FieldType.Delimited;
-                    parser.SetDelimiters(";");
+                    parser.SetDelimiters(",");
 
                     // Read the header line to get column indexes
                     string[] headers = parser.ReadFields();
@@ -341,27 +386,30 @@ namespace BusinessLogicLayer
                             }
                         }
                     }
-                }
 
-                return invalidColumns;
+                    return invalidColumns;
+                }
             }
             catch (Exception ex)
             {
                 // Handle and rethrow the exception if any error occurs during the process
-                throw;
+                throw new CustomValidationException("Error occurred while checking field properties in the CSV file.", ex);
             }
         }
+
+
 
         /// <summary>
         /// Check if there are at least 2 lines in the file
         /// </summary>
-        /// <param name="filepath"></param>
+        /// <param name="fileBytes"></param>
         /// <returns>True or False</returns>
-        public static bool HasAtLeastTwoLines(string filepath)
+        public static bool HasAtLeastTwoLines(byte[] fileBytes)
         {
             try
             {
-                using (StreamReader reader = new StreamReader(filepath))
+                using (MemoryStream stream = new MemoryStream(fileBytes))
+                using (StreamReader reader = new StreamReader(stream))
                 {
                     int lineCount = 0;
 
@@ -383,25 +431,25 @@ namespace BusinessLogicLayer
             }
             catch (Exception ex)
             {
-                // Handle and rethrow the exception if any error occurs during the process
-                throw;
+                throw new CustomValidationException("Error occurred while checking if there are at least two lines.", ex);
             }
         }
+
 
         /// <summary>
         /// At least one field must be of type Text and marked as Searchable
         /// </summary>
         /// <param name="filepath"></param>
         /// <returns></returns>
-        public static bool HasTextFieldMarkedAsSearchable(string filepath)
+        public static bool HasTextFieldMarkedAsSearchable(byte[] fileBytes)
         {
             try
             {
-                // Using TextFieldParser to read CSV file with semicolon (;) delimiter
-                using (TextFieldParser parser = new TextFieldParser(filepath))
+                using (MemoryStream stream = new MemoryStream(fileBytes))
+                using (TextFieldParser parser = new TextFieldParser(stream))
                 {
                     parser.TextFieldType = FieldType.Delimited;
-                    parser.SetDelimiters(";");
+                    parser.SetDelimiters(",");
 
                     // Read the header line to get column indexes
                     string[] headers = parser.ReadFields();
@@ -426,25 +474,25 @@ namespace BusinessLogicLayer
             }
             catch (Exception ex)
             {
-                // Handle and rethrow the exception if any error occurs during the process
-                throw;
+                throw new CustomValidationException("Error occurred while checking if there is a Text field marked as Searchable.", ex);
             }
         }
+
 
         /// <summary>
         /// At least one field must be of type Date
         /// </summary>
-        /// <param name="filepath"></param>
+        /// <param name="fileBytes"></param>
         /// <returns></returns>
-        public static bool HasDateField(string filepath)
+        public static bool HasDateField(byte[] fileBytes)
         {
             try
             {
-                // Using TextFieldParser to read CSV file with semicolon (;) delimiter
-                using (TextFieldParser parser = new TextFieldParser(filepath))
+                using (MemoryStream stream = new MemoryStream(fileBytes))
+                using (TextFieldParser parser = new TextFieldParser(stream))
                 {
                     parser.TextFieldType = FieldType.Delimited;
-                    parser.SetDelimiters(";");
+                    parser.SetDelimiters(",");
 
                     // Read the header line to get column indexes
                     string[] headers = parser.ReadFields();
@@ -468,25 +516,26 @@ namespace BusinessLogicLayer
             }
             catch (Exception ex)
             {
-                // Handle and rethrow the exception if any error occurs during the process
-                throw;
+                
+                throw new CustomValidationException("Error occurred while checking if there is a Date field.", ex);
             }
         }
+
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="filepath"></param>
+        /// <param name="fileBytes"></param>
         /// <returns></returns>
-        public static bool IsValidCSV(string filepath)
+        public static bool IsValidCSV(byte[] fileBytes)
         {
             try
             {
-                // Using TextFieldParser to read CSV file with semicolon (;) delimiter
-                using (TextFieldParser parser = new TextFieldParser(filepath))
+                using (MemoryStream stream = new MemoryStream(fileBytes))
+                using (TextFieldParser parser = new TextFieldParser(stream))
                 {
                     parser.TextFieldType = FieldType.Delimited;
-                    parser.SetDelimiters(";");
+                    parser.SetDelimiters(",");
 
                     // Read the header line to get column count
                     string[] headers = parser.ReadFields();
@@ -516,8 +565,7 @@ namespace BusinessLogicLayer
             }
             catch (Exception ex)
             {
-                // Handle and rethrow the exception if any error occurs during the process
-                throw;
+                throw new CustomValidationException("Error occurred while validating the CSV file.", ex);
             }
         }
     }
