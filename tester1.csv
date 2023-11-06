@@ -1,1 +1,3 @@
-Name;Type;Search;Library;Filter;Visible
+Name;Type;Search;Library Filter;Visible
+Hello;"Text";"Yes";No;No
+Date time;"Date";No;No;No
