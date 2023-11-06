@@ -32,6 +32,20 @@ namespace upload_csv.Controllers
             return Ok(csv);
         }
 
+        // GET: api/csv
+        [HttpGet]
+        [Route("get")]
+        public async Task<ActionResult<IEnumerable<CSV>>> GetData()
+        {
+            var csvList = await _context.CSV_data.ToListAsync();
+
+            if (csvList == null || csvList.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(csvList);
+        }
 
         [HttpPost]
         [Route("upload")]

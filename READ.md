@@ -19,8 +19,8 @@ and more info to follow)
 
 CREATE TABLE CSV_data (
     Id INT PRIMARY KEY IDENTITY(1,1),
-    Name NVARCHAR(255),
-    Type NVARCHAR(255),
+    Name NVARCHAR(100),
+    Type NVARCHAR(100),
     Search NVARCHAR(10),
     "Library Filter" NVARCHAR(10),
     Visible NVARCHAR(10)
