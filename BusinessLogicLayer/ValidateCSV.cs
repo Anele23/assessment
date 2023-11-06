@@ -30,7 +30,7 @@ namespace BusinessLogicLayer
                                 // Check if there was an error
                                 if (columnsWithEmptyValues.Count > 0)
                                 {
-                                    string error = "The value in the" + string.Join(", ", columnsWithEmptyValues) + "column on row 2 is empty. Update the CSV and\r\ntry to import again.: ";
+                                    string error = "The value in the " + string.Join(", ", columnsWithEmptyValues) + " column on row 2 is empty. Update the CSV and try to import again. ";
 
                                     return error;
                                 }

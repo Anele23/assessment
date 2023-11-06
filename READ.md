@@ -9,5 +9,19 @@ Requirements in summary:
 o Upload and validate a CSV file (Example of the CSV below, Rules and requirements
 and more info to follow)
 
-• Take the opportunity to show off your skillsets as we want to see what capabilities you can
-present in this assessment.
+
+
+
+1) Run SQL  Create a database  Nameed CSVassessment  by running the below command: 
+-CREATE DATABASE CSVassessment;
+
+2) Create the "CSV_data" table with the below command: 
+
+CREATE TABLE CSV_data (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(255),
+    Type NVARCHAR(255),
+    Search NVARCHAR(10),
+    "Library Filter" NVARCHAR(10),
+    Visible NVARCHAR(10)
+);

@@ -97,7 +97,7 @@ namespace upload_csv.Controllers
                     counter++;
                     if (values.Length >= 5)
                     {
-                        dataTable.Rows.Add(counter,values[0], values[1], values[2], values[3], values[4]);
+                        dataTable.Rows.Add(counter,values[0].Replace("\"",""), values[1].Replace("\"", ""), values[2].Replace("\"", ""), values[3].Replace("\"", ""), values[4].Replace("\"", ""));
                     }
                 }
             }
