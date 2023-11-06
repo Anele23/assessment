@@ -57,9 +57,7 @@ C:\Users\TheBoss\source\repos\BulkUploader\upload_csv\bin\Debug\net6.0\runtimes\
 C:\Users\TheBoss\source\repos\BulkUploader\upload_csv\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\TheBoss\source\repos\BulkUploader\upload_csv\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
 C:\Users\TheBoss\source\repos\BulkUploader\upload_csv\bin\Debug\net6.0\BusinessLogicLayer.dll
-C:\Users\TheBoss\source\repos\BulkUploader\upload_csv\bin\Debug\net6.0\DataAccessLayer.dll
 C:\Users\TheBoss\source\repos\BulkUploader\upload_csv\bin\Debug\net6.0\BusinessLogicLayer.pdb
-C:\Users\TheBoss\source\repos\BulkUploader\upload_csv\bin\Debug\net6.0\DataAccessLayer.pdb
 C:\Users\TheBoss\source\repos\BulkUploader\upload_csv\obj\Debug\net6.0\upload_csv.csproj.AssemblyReference.cache
 C:\Users\TheBoss\source\repos\BulkUploader\upload_csv\obj\Debug\net6.0\upload_csv.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\TheBoss\source\repos\BulkUploader\upload_csv\obj\Debug\net6.0\upload_csv.AssemblyInfoInputs.cache

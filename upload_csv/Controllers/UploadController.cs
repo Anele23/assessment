@@ -70,10 +70,11 @@ namespace upload_csv.Controllers
         private void BulkInsertFromCsv(byte[] csvData)
         {
             DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("Id", typeof(int));
             dataTable.Columns.Add("Name", typeof(string));
             dataTable.Columns.Add("Type", typeof(string));
-            dataTable.Columns.Add("Searchable", typeof(string));
-            dataTable.Columns.Add("LibraryFilter", typeof(string));
+            dataTable.Columns.Add("Search", typeof(string));
+            dataTable.Columns.Add("Library Filter", typeof(string));
             dataTable.Columns.Add("Visible", typeof(string));
 
             // Read CSV data from byte array and populate the DataTable
@@ -81,12 +82,22 @@ namespace upload_csv.Controllers
             using (StreamReader reader = new StreamReader(stream))
             {
                 string line;
+                int counter = 1;
+                bool isFirstRow = true; // Flag to skip the first row
                 while ((line = reader.ReadLine()) != null)
                 {
+                    if (isFirstRow)
+                    {
+                        isFirstRow = false;
+                        continue; // Skip the first row
+                    }
+                        
+            
                     string[] values = line.Split(',');
+                    counter++;
                     if (values.Length >= 5)
                     {
-                        dataTable.Rows.Add(values[0], values[1], values[2], values[3], values[4]);
+                        dataTable.Rows.Add(counter,values[0], values[1], values[2], values[3], values[4]);
                     }
                 }
             }

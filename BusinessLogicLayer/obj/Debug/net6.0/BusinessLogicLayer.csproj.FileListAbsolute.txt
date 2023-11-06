@@ -9,7 +9,4 @@ C:\Users\TheBoss\source\repos\BulkUploader\BusinessLogicLayer\obj\Debug\net6.0\B
 C:\Users\TheBoss\source\repos\BulkUploader\BusinessLogicLayer\obj\Debug\net6.0\refint\BusinessLogicLayer.dll
 C:\Users\TheBoss\source\repos\BulkUploader\BusinessLogicLayer\obj\Debug\net6.0\BusinessLogicLayer.pdb
 C:\Users\TheBoss\source\repos\BulkUploader\BusinessLogicLayer\obj\Debug\net6.0\ref\BusinessLogicLayer.dll
-C:\Users\TheBoss\source\repos\BulkUploader\BusinessLogicLayer\bin\Debug\net6.0\DataAccessLayer.dll
-C:\Users\TheBoss\source\repos\BulkUploader\BusinessLogicLayer\bin\Debug\net6.0\DataAccessLayer.pdb
 C:\Users\TheBoss\source\repos\BulkUploader\BusinessLogicLayer\obj\Debug\net6.0\BusinessLogicLayer.csproj.AssemblyReference.cache
-C:\Users\TheBoss\source\repos\BulkUploader\BusinessLogicLayer\obj\Debug\net6.0\BusinessLogicLayer.csproj.CopyComplete
